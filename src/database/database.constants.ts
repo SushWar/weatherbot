@@ -87,7 +87,7 @@ const Employee: Model<EmployeeDocument> =
 interface TokenDocument extends Document {
   name: string;
   token: string;
-  date: Date;
+  date: string;
 }
 
 const tokenSchema: Schema<TokenDocument> = new mongoose.Schema({
@@ -100,7 +100,7 @@ const tokenSchema: Schema<TokenDocument> = new mongoose.Schema({
     required: true,
   },
   date:{
-    type: Date,
+    type: String,
     required: true,
   }
 });
