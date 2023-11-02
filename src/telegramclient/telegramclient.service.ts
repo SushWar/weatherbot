@@ -8,7 +8,7 @@ import { StringSession } from 'telegram/sessions';
 
 @Injectable()
 export class TelegramclientService {
-  private token: string;
+  
   private telegramBot: Telegram;
   private apiId = parseInt(this.configService.get<string>('CLIENT_API_ID'), 10);
   private apiHash = this.configService.get<string>('CLIENT_API_HASH');
@@ -21,7 +21,7 @@ export class TelegramclientService {
     this.apiHash,
     {},
   );
-
+    private token:string
   constructor(
     private readonly configService: ConfigService,
     private readonly telegrambotService: TelegrambotService,
@@ -33,8 +33,9 @@ export class TelegramclientService {
   //-------------Start & Update---------------------------------------------------------------------------------------------------
   initiateTelegramBot = async () => {
     try {
-      const token = await this.databaseService.getToken();
-      this.telegramBot = new Telegram(token);
+      const getToken = await this.databaseService.getToken();
+      this.token = getToken;
+      this.telegramBot = new Telegram(this.token);
     } catch (error) {
       console.error('Error setting up Telegram bot:', error);
     }
@@ -55,8 +56,8 @@ export class TelegramclientService {
 
   async getBotInfo() {
     try {
-      const info = await this.telegramBot.getMe();
-      return info;
+      return await this.telegramBot.getMe();
+      
     } catch (error) {
       console.log(`getBotInfo() function fails / ${error.message}`);
       return error;
@@ -65,8 +66,8 @@ export class TelegramclientService {
 
   async getBotShortDescription() {
     try {
-      const shortDes = await this.telegramBot.getMyShortDescription();
-      return shortDes;
+      return await this.telegramBot.getMyShortDescription();
+      
     } catch (error) {
       console.log(`getBotShortDescription() function fails / ${error.message}`);
       return error;
@@ -75,8 +76,8 @@ export class TelegramclientService {
 
   async getBotDescription() {
     try {
-      const description = await this.telegramBot.getMyDescription();
-      return description;
+      return await this.telegramBot.getMyDescription();
+
     } catch (error) {
       console.log(`getBotShortDescription() function fails / ${error.message}`);
       return error;
