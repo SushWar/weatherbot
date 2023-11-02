@@ -32,7 +32,10 @@ export class TelegramclientService {
   //-------------Start & Update---------------------------------------------------------------------------------------------------
   updateToken = async () => {
     try {
-      this.token = await this.databaseService.getToken();
+      const getToken = await this.databaseService.getToken();
+      if(getToken){
+        this.token = getToken
+      }
     } catch (error) {
       console.error(`${new Date()} ==> TelegramclientService ==> Error setting up updateToken:`, error);
     }
@@ -109,8 +112,8 @@ export class TelegramclientService {
           token: token,
         };
         response = await this.databaseService.pushToken(sendDetails); //push new token to database
-        this.updateToken();
-        this.telegrambotService.updateToken();
+        await this.updateToken();
+        await this.telegrambotService.updateToken();
         console.log(`Generated new token`);
       }, 1);
     }, 2010);

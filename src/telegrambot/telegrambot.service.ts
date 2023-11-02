@@ -44,7 +44,7 @@ export class TelegrambotService {
 
   //----------------------------------------update Token------------------------------------------------------------------------------------------------------
 
-  updateToken() {
+  async updateToken() {
     try {
       if (this.bot) {
         this.bot.stop('Updating the Token');
