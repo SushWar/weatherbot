@@ -117,7 +117,7 @@ export class DatabaseService {
   async getToken() {
     try {
       await this.connectDatabase();
-      const tokenData = await Token.find({}).sort({ date: -1 });
+      const tokenData = await Token.find({}).sort({ date: -1 }).exec();
       return tokenData[0].token;
     } catch (error) {
       console.log(`${new Date()} ==> DatabaseService ==> getToken() function fails / ${error.message}`);
