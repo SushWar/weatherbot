@@ -131,11 +131,10 @@ export class DatabaseService {
     try {
       const { name, token } = tokenData;
       await this.connectDatabase();
-      const date = new Date();
       const newToken = new Token({
         name: name,
         token: token,
-        date: date,
+        date: new Date(),
       });
       const saveToken = newToken.save();
       return saveToken;

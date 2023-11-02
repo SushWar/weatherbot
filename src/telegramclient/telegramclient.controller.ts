@@ -4,18 +4,18 @@ import { TelegramclientService } from './telegramclient.service';
 @Controller('telegramclient')
 export class TelegramclientController {
 
-    constructor(private readonly telegramclientService:TelegramclientService){}
+  constructor(private readonly telegramclientService: TelegramclientService) { }
 
-    @Get('/info')
+  @Get('/info')
   async getBotInfo() {
     const basic = await this.telegramclientService.getBotInfo()
-    const {info, short, long} = basic
+    const { info, short, long } = basic
     const botInfo = {
       info: info,
       short: short,
       long: long
     };
-    return botInfo;
+    return botInfo
   }
 
 
@@ -45,7 +45,7 @@ export class TelegramclientController {
   }
 
   @Post('/sendcustommessage')
-  async sendCustomMessage(@Body() vals){
+  async sendCustomMessage(@Body() vals) {
     return await this.telegramclientService.sendCustumMessageAllSubscriber(vals)
   }
 
