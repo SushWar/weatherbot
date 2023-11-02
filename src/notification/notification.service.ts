@@ -25,7 +25,7 @@ export class NotificationService {
       const token = await this.databaseService.getToken();
       this.telegramBot = new Telegram(token);
     } catch (error) {
-      console.error('Error setting up Telegram bot:', error);
+      console.log(`${new Date()} ==> NotificationService ==> makeBotReady() function fails / ${error.message}`);
     }
   };
 
@@ -38,7 +38,7 @@ export class NotificationService {
       }
       this.makeBotReady();
     } catch (error) {
-      console.error('Error updating Telegram bot token:', error);
+      console.log(`${new Date()} ==> NotificationService ==> updateToken() function fails / ${error.message}`);
     }
   }
 
@@ -61,7 +61,7 @@ export class NotificationService {
         weatherMsg = `Please provide the correct city name ${emoji.foldedHands}`;
       }
     } catch (error) {
-      console.log(error);
+      console.log(`${new Date()} ==> NotificationService ==> getWeather() function fails / ${error.message}`);
       weatherMsg = message.catchIssue;
     }
 
@@ -93,6 +93,7 @@ export class NotificationService {
         };
       }
     } catch (error) {
+      console.log(`${new Date()} ==> NotificationService ==> getWeatherUpdates() function fails / ${error.message}`);
       return {
         cod: '404',
       };
@@ -137,7 +138,6 @@ export class NotificationService {
   @Cron('0 0 9 * * 1-7')
   async taskScheduler() {
     
-
     try {
       const userId = await this.databaseService.subscriberDetailMany();
       userId.forEach(async(user)=>{
@@ -145,7 +145,7 @@ export class NotificationService {
         await this.sendNotification(user.telegramId, sendMsg)
       });
     } catch (error) {
-        console.log('Task scheduler Fails')
+      console.log(`${new Date()} ==> NotificationService ==> taskScheduler() function fails / ${error.message}`);
     }
 
       

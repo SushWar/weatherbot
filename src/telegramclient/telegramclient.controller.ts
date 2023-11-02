@@ -8,10 +8,12 @@ export class TelegramclientController {
 
     @Get('/info')
   async getBotInfo() {
+    const basic = await this.telegramclientService.getBotInfo()
+    const {info, short, long} = basic
     const botInfo = {
-      info: await this.telegramclientService.getBotInfo(),
-      short: await this.telegramclientService.getBotShortDescription(),
-      long: await this.telegramclientService.getBotDescription(),
+      info: info,
+      short: short,
+      long: long
     };
     return botInfo;
   }

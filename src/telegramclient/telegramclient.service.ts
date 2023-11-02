@@ -8,8 +8,7 @@ import { StringSession } from 'telegram/sessions';
 
 @Injectable()
 export class TelegramclientService {
-  
-  private telegramBot: Telegram;
+
   private apiId = parseInt(this.configService.get<string>('CLIENT_API_ID'), 10);
   private apiHash = this.configService.get<string>('CLIENT_API_HASH');
   private stringSession = new StringSession(
@@ -21,65 +20,39 @@ export class TelegramclientService {
     this.apiHash,
     {},
   );
-    private token:string
+  private token: string
   constructor(
     private readonly configService: ConfigService,
     private readonly telegrambotService: TelegrambotService,
     private readonly databaseService: DatabaseService,
   ) {
-    this.initiateTelegramBot();
+    this.updateToken()
   }
 
   //-------------Start & Update---------------------------------------------------------------------------------------------------
-  initiateTelegramBot = async () => {
+  updateToken = async () => {
     try {
-      const getToken = await this.databaseService.getToken();
-      this.token = getToken;
-      this.telegramBot = new Telegram(this.token);
+      this.token = await this.databaseService.getToken();
     } catch (error) {
-      console.error('Error setting up Telegram bot:', error);
-    }
-  };
-
-  updateToken() {
-    try {
-      if (this.telegramBot) {
-        this.telegramBot = null;
-      }
-      this.initiateTelegramBot();
-    } catch (error) {
-      console.error('Error updating bot token:', error);
+      console.error(`${new Date()} ==> TelegramclientService ==> Error setting up updateToken:`, error);
     }
   }
+
 
   //-------------------------------Start & Update-----------------------------------------------------------------------------------
 
   async getBotInfo() {
     try {
-      return await this.telegramBot.getMe();
-      
-    } catch (error) {
-      console.log(`getBotInfo() function fails / ${error.message}`);
-      return error;
-    }
-  }
-
-  async getBotShortDescription() {
-    try {
-      return await this.telegramBot.getMyShortDescription();
-      
-    } catch (error) {
-      console.log(`getBotShortDescription() function fails / ${error.message}`);
-      return error;
-    }
-  }
-
-  async getBotDescription() {
-    try {
-      return await this.telegramBot.getMyDescription();
+      const telegramBot = new Telegram(this.token);
+      const biodata = {
+        info: await telegramBot.getMe(),
+        short: await telegramBot.getMyShortDescription(),
+        long: await telegramBot.getMyDescription()
+      }
+      return biodata
 
     } catch (error) {
-      console.log(`getBotShortDescription() function fails / ${error.message}`);
+      console.log(`${new Date()} ==> TelegramclientService ==> getBotInfo() function fails / ${error.message}`);
       return error;
     }
   }
@@ -94,7 +67,7 @@ export class TelegramclientService {
         token: await this.stepToGenerateTokenFollow(name),
       };
     } catch (error) {
-      console.log(`generateNewToken() function fails / ${error.message}`);
+      console.log(`${new Date()} ==> TelegramclientService ==> generateNewToken() function fails / ${error.message}`);
       return error;
     }
   }
@@ -156,7 +129,7 @@ export class TelegramclientService {
         token: await this.databaseService.getToken(),
       };
     } catch (error) {
-      console.log(`getAccessToken() function fails / ${error.message}`);
+      console.log(`${new Date()} ==> TelegramclientService ==> getAccessToken() function fails / ${error.message}`);
       return error;
     }
   }
@@ -172,7 +145,7 @@ export class TelegramclientService {
         status: await this.stepToUpdateNameFollow(value),
       };
     } catch (error: any) {
-      console.log(`updateBotName() function fails / ${error.message}`);
+      console.log(`${new Date()} ==> TelegramclientService ==> updateBotName() function fails / ${error.message}`);
       return error;
     }
   }
@@ -220,14 +193,15 @@ export class TelegramclientService {
   async updateBotBio(body: any) {
     try {
       const { value } = body;
-      const isUpdated = await this.telegramBot.setMyShortDescription(value);
+      const telegramBot = new Telegram(this.token);
+      const isUpdated = await telegramBot.setMyShortDescription(value);
       if (isUpdated) {
         return { message: 'ok' };
       } else {
         return { message: 'Please check your Connection !!' };
       }
     } catch (error: any) {
-      console.log(`updateBotBio() function fails / ${error.message}`);
+      console.log(`${new Date()} ==> TelegramclientService ==> updateBotBio() function fails / ${error.message}`);
       return error;
     }
   }
@@ -235,14 +209,15 @@ export class TelegramclientService {
   async updateBotDescription(body: any) {
     try {
       const { value } = body;
-      const isUpdated = await this.telegramBot.setMyDescription(value);
+      const telegramBot = new Telegram(this.token);
+      const isUpdated = await telegramBot.setMyDescription(value);
       if (isUpdated) {
         return { message: 'ok' };
       } else {
         return { message: 'Please check your Connection !!' };
       }
     } catch (error: any) {
-      console.log(`updateBotDescription() function fails / ${error.message}`);
+      console.log(`${new Date()} ==> TelegramclientService ==> updateBotDescription() function fails / ${error.message}`);
       return error;
     }
   }
@@ -254,7 +229,7 @@ export class TelegramclientService {
       const userData = await this.databaseService.subscriberDetailMany();
       return { message: 'ok', data: userData };
     } catch (error) {
-      console.log(`getSubscriber() function fails / ${error.message}`);
+      console.log(`${new Date()} ==> TelegramclientService ==> getSubscriber() function fails / ${error.message}`);
       return error;
     }
   }
@@ -268,7 +243,7 @@ export class TelegramclientService {
         return { status: 'ok', message: 'Successfully Updated' };
       }
     } catch (error) {
-      console.log(`updateBotDescription() function fails / ${error.message}`);
+      console.log(`${new Date()} ==> TelegramclientService ==> updateBotDescription() function fails / ${error.message}`);
       return error;
     }
   }
@@ -276,16 +251,16 @@ export class TelegramclientService {
   async sendCustumMessageAllSubscriber(body: any) {
     try {
       const { message } = body;
-
+      const telegramBot = new Telegram(this.token);
       const userData = await this.databaseService.subscriberDetailMany();
       userData.forEach(async (user) => {
-        await this.telegramBot.sendMessage(user.telegramId, message);
+        await telegramBot.sendMessage(user.telegramId, message);
       });
 
       return { sendAll: 'ok' };
     } catch (error) {
       console.log(
-        `sendCustumMessageAllSubscriber() function fails / ${error.message}`,
+        `${new Date()} ==> TelegramclientService ==> sendCustumMessageAllSubscriber() function fails / ${error.message}`,
       );
       return error;
     }

@@ -25,7 +25,7 @@ export class DatabaseService {
         process.exit();
       });
     } catch (error) {
-      console.log('Please check your connection' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> connectDatabase() function fails / ${error.message}`);
 
       process.exit();
     }
@@ -39,7 +39,7 @@ export class DatabaseService {
       const user = await User.findOne({ telegramId: telegramId });
       return user;
     } catch (error) {
-      console.log('subscriberDetailsOne() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> subscriberDetailsOne() function fails / ${error.message}`);
       return error;
     }
   }
@@ -52,7 +52,7 @@ export class DatabaseService {
       const user = await User.find({});
       return user;
     } catch (error) {
-      console.log('subscriberDetailMany() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> subscriberDetailMany() function fails / ${error.message}`);
       return error;
     }
   }
@@ -74,7 +74,7 @@ export class DatabaseService {
       const saveUser = await newUser.save();
       return saveUser;
     } catch (error) {
-      console.log('createNewUser() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> createNewUser() function fails / ${error.message}`);
       return error;
     }
   }
@@ -90,7 +90,7 @@ export class DatabaseService {
       );
       return updateEntry;
     } catch (error) {
-      console.log('updateUserCity() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> updateUserCity() function fails / ${error.message}`);
       return error;
     }
   }
@@ -107,7 +107,7 @@ export class DatabaseService {
       );
       return updateEntry;
     } catch (error) {
-      console.log('blockUnblockSubscriber() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> blockUnblockSubscriber() function fails / ${error.message}`);
       return error;
     }
   }
@@ -120,7 +120,7 @@ export class DatabaseService {
       const tokenData = await Token.find({}).sort({ date: -1 });
       return tokenData[0].token;
     } catch (error) {
-      console.log('getToken() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> getToken() function fails / ${error.message}`);
       return error;
     }
   }
@@ -140,7 +140,7 @@ export class DatabaseService {
       const saveToken = newToken.save();
       return saveToken;
     } catch (error) {
-      console.log('pushToken() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> getToken() pushToken fails / ${error.message}`);
       return error;
     }
   }
@@ -164,7 +164,7 @@ export class DatabaseService {
 
       return { login: 'ok' };
     } catch (error) {
-      console.log('loginExternal() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> loginExternal() pushToken fails / ${error.message}`);
       return error;
     }
   }
@@ -179,7 +179,7 @@ export class DatabaseService {
       }
       return { login: 'failed', name: data.name, email: data.email };
     } catch (error) {
-      console.log('loginInternal() gives error :' + error);
+      console.log(`${new Date()} ==> DatabaseService ==> loginInternal() pushToken fails / ${error.message}`);
       return error;
     }
   }

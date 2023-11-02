@@ -38,7 +38,7 @@ export class TelegrambotService {
       this.onRecieveMessage();
       this.bot.launch();
     } catch (error) {
-      console.error('Error setting up Telegraf bot:', error);
+      console.log(`${new Date()} ==> TelegrambotService ==> setupBot() function fails / ${error.message}`);
     }
   }
 
@@ -52,7 +52,7 @@ export class TelegrambotService {
       }
       this.setupBot();
     } catch (error) {
-      console.error('Error updating Telegraf bot token:', error);
+      console.log(`${new Date()} ==> TelegrambotService ==> updateToken() function fails / ${error.message}`);
     }
   }
 
@@ -68,7 +68,7 @@ export class TelegrambotService {
         this.isBlocked = user.isBlocked;
       }
     } catch (error) {
-      console.log(error);
+      console.log(`${new Date()} ==> TelegrambotService ==> verifySubscriber() function fails / ${error.message}`);
     }
   }
 
@@ -118,7 +118,7 @@ export class TelegrambotService {
       } else if (this.isBlocked) {
         ctx.reply(message.isBlocked);
       } else if (this.isSubscribed) {
-        const msg = this.getWeather(this.city,this.firstName);
+        const msg = this.getWeather(this.city, this.firstName);
         ctx.reply(await msg);
       } else {
         ctx.reply(message.inValid);
@@ -174,7 +174,7 @@ export class TelegrambotService {
         const text = ctx.message.text;
         const filter = text.split(' ');
         const cityName = filter[1];
-        const msg = this.getWeather(cityName,this.firstName);
+        const msg = this.getWeather(cityName, this.firstName);
         ctx.reply(await msg);
       } else {
         ctx.reply(message.inValid);
@@ -257,7 +257,7 @@ export class TelegrambotService {
         msg = `Please provide the correct city name ${emoji.foldedHands}`;
       }
     } catch (error) {
-      console.log(error);
+      console.log(`${new Date()} ==> TelegrambotService ==> signUp() function fails / ${error.message}`);
       msg = message.catchIssue;
     }
     return msg;
@@ -288,7 +288,7 @@ export class TelegrambotService {
         msg = `Please provide the correct city name ${emoji.foldedHands}`;
       }
     } catch (error) {
-      console.log(error);
+      console.log(`${new Date()} ==> TelegrambotService ==> updateCity() function fails / ${error.message}`);
       msg = message.catchIssue;
     }
     return msg;
@@ -296,7 +296,7 @@ export class TelegrambotService {
 
   //----------------------------------------------------Weather functions------------------------------------------------------------------------
 
-  getWeather = async (city: string, firstName:string) => {
+  getWeather = async (city: string, firstName: string) => {
     let weatherMsg = ``;
     try {
       const checkCity = await this.getWeatherUpdates(city);
@@ -306,12 +306,13 @@ export class TelegrambotService {
         weatherMsg = `Please provide the correct city name ${emoji.foldedHands}`;
       }
     } catch (error) {
-      console.log(error);
+      console.log(`${new Date()} ==> TelegrambotService ==> getWeather() function fails / ${error.message}`);
       weatherMsg = message.catchIssue;
     }
 
     return weatherMsg;
   };
+
   getWeatherUpdates = async (city: string) => {
     try {
       const response = await axios.get(
@@ -338,6 +339,7 @@ export class TelegrambotService {
         };
       }
     } catch (error) {
+      console.log(`${new Date()} ==> TelegrambotService ==> getWeatherUpdates() function fails / ${error.message}`);
       return {
         cod: '404',
       };

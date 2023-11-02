@@ -15,7 +15,7 @@ export class AdminService {
            const res = await this.databaseService.loginExternal(vals)
            return res
         } catch (error:any) {
-            console.log('pushToken() gives error :' + error)
+            console.log(`${new Date()} ==> AdminService ==> providerLogin() pushToken fails / ${error.message}`);
             return error
         }
     }
@@ -29,7 +29,7 @@ export class AdminService {
             return res
             
         } catch (error) {
-            console.log('portalLogin() gives error :' + error)
+            console.log(`${new Date()} ==> AdminService ==> portalLogin() pushToken fails / ${error.message}`);
             return error
         }
     }
