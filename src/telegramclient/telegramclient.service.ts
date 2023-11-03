@@ -5,6 +5,7 @@ import { DatabaseService } from 'src/database/database.service';
 import { Telegram } from 'telegraf';
 import { Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class TelegramclientService {
@@ -274,5 +275,34 @@ export class TelegramclientService {
   decryptMessage(obj: any) {
     const msg = obj.messages[0].message.split('\n');
     return msg[1];
+  }
+
+
+  //--------------------------------------------Function to send daily notifications at 9:00am-------------------------------------------------------
+
+
+
+  @Cron('0 0 9 * * 1-7')
+  async notificationTaskScheduler() {
+    const telegramBot = new Telegram(this.token);
+    try {
+      const userId = await this.databaseService.subscriberDetailMany();
+      userId.forEach(async(user)=>{
+        const message = await this.telegrambotService.getWeather(user.city, user.firstName)
+        await telegramBot.sendMessage(user.telegramId,message)
+      });
+    } catch (error) {
+      console.log(`${new Date()} ==> NotificationService ==> taskScheduler() function fails / ${error.message}`);
+    }
+
+      
+  }
+
+  //-----------------------------------Function to keep app from going inactive---------------------------------------------------------------
+
+  @Cron('55 * * * * *')
+  async idleTaskScheduler() {
+    this.updateToken()
+    console.log(`${new Date()} ==> TelegramclientService ==>Task scheduling job to keep out of inactivity`)
   }
 }
